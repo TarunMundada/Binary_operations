@@ -1,39 +1,37 @@
-def booth_multiplication(multiplicand, multiplier):
-    # Determine the number of bits for the multiplicand and multiplier
-    n = len(multiplicand)
-    assert n == len(multiplier), "Multiplicand and multiplier must have the same number of bits"
+from binary_adder import binary_add
+from helpers import *
 
-    # Initialize variables for the algorithm
-    product = [0] * (2 * n)
-    accumulator = [0] * (n + 1)
-    complement_multiplier = [1] if multiplier[-1] == 0 else [-1]
+def booth_multiplier(q, m, n):
+    a = '0' * len(q)
+    y = '0'  # Qn-1 value taken as y here
+    m_c = compliment(m)
+    x = a + q + y
+    
+    def check(q,m):
+        a= int(q,2)
+        b = int(m,2)
+        product = a * b
+        check = bin(product).replace('0b', '')
+        return check
+    
+    x = check(q,m)
+    while n > 0:
+        x = a + q + y
 
-    for i in range(n):
-        # Check if the last two bits of the multiplier are 10 or 01
-        if multiplier[-1] == 0 and complement_multiplier[0] == -1:
-            # Perform A = A - M
-            for j in range(n):
-                accumulator[j] += multiplicand[j]
+        if x[-2:] == '00' or x[-2:] == '11':
+            x = right_shift(x)
+        elif x[-2:] == '10':
+            a = binary_add(x[:4], m)
+            x = right_shift(x)
+        elif x[-2:] == '01':
+            a = binary_add(a, m_c)
+            x = right_shift(x)
+        # print(x)
+        n -= 1
+    
+    return x 
 
-        elif multiplier[-1] == 1 and complement_multiplier[0] == 1:
-            # Perform A = A + M
-            for j in range(n):
-                accumulator[j] -= multiplicand[j]
+product = booth_multiplier('01011010', '00000010', 8)
 
-        # Right shift the accumulator and the multiplier
-        accumulator, complement_multiplier, multiplier = [accumulator[-1]] + accumulator[:-1], [complement_multiplier[-1]] + complement_multiplier[:-1], [multiplier[-1]] + multiplier[:-1]
+print('the product is', product)
 
-        # Update the product
-        for j in range(n):
-            product[j] = accumulator[j]
-
-    return product[:n]
-
-# Example usage
-multiplicand = [1, 0, 0, 1]  # 9 in binary (1001)
-multiplier = [1, 1, 0, 1]    # 13 in binary (1101)
-
-result = booth_multiplication(multiplicand, multiplier)
-print("Multiplicand:", multiplicand)
-print("Multiplier:", multiplier)
-print("Product:", result)

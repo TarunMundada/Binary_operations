@@ -14,3 +14,5 @@ def right_shift(a):
     shifted = '0' + a
     shifted = shifted[:-1]
     return shifted
+
+print(right_shift('001111'))
