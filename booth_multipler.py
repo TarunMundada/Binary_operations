@@ -8,19 +8,19 @@ def booth_multiplier(q, m, n):
     x = a + q + y
 
     while n > 0:
+        x = a + q + y
+
         if x[-2:] == '00' or x[-2:] == '11':
             x = right_shift(x)
         elif x[-2:] == '10':
-            a = binary_add(a, m)
+            a = binary_add(x[:4], m)
             x = right_shift(x)
         elif x[-2:] == '01':
             a = binary_add(a, m_c)
             x = right_shift(x)
-
+        print(x)
         n -= 1
         
-        print(x)
-
     return a, x
 
 booth_multiplier('1011', '1001', 4)
