@@ -15,4 +15,10 @@ def right_shift(a):
     shifted = shifted[:-1]
     return shifted
 
-print(right_shift('001111'))
+def bin_to_dec(a) :
+    x = int(a,2)
+    return x
+
+def dec_to_bin(a):
+    x = bin(a).replace('0b', '')
+    return x
